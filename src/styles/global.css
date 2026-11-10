@@ -407,3 +407,38 @@ main::before {
     font-size: var(--fs-label);
   }
 }
+
+/* Email toast (src/scripts/copy-email.ts) */
+.email-toast {
+  position: fixed;
+  left: 50%;
+  bottom: var(--s-5);
+  z-index: 50;
+  max-width: min(32rem, calc(100vw - 2 * var(--s-4)));
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-2);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-mono-stack);
+  font-size: var(--fs-small);
+  overflow-wrap: anywhere;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0.5rem);
+  transition:
+    opacity var(--dur-1) var(--ease-out),
+    transform var(--dur-1) var(--ease-out);
+}
+
+.email-toast[data-open] {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .email-toast {
+    transition: none;
+  }
+}

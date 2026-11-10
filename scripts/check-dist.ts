@@ -226,14 +226,14 @@ export const checks: DistCheck[] = [
   },
   {
     ac: '7.5',
-    name: 'resume absent: Request resume mailto, no .pdf href',
+    name: 'resume present: Resume CTA links the PDF, which ships in dist',
     run: (dist) => {
       const doc = html(dist);
       const errors: string[] = [];
-      if (!/<a class="btn btn-primary" href="mailto:vadlapallykiran@gmail.com\?subject=Resume%20request"[^>]*>Request resume<\/a>/.test(doc)) errors.push('no Request resume mailto CTA');
-      for (const file of walk(dist).filter((f) => TEXT.test(f))) {
-        if (/href="[^"]*\.pdf"/i.test(readFileSync(file, 'utf8'))) errors.push(`.pdf href in ${relative(dist, file)}`);
-      }
+      if (!/<a class="btn btn-primary" href="\/Kiran_Vadlapally_Resume\.pdf"[^>]*>Resume<\/a>/.test(doc)) errors.push('no Resume CTA linking the PDF');
+      if (/Request resume/.test(doc)) errors.push('Request resume CTA still present');
+      const pdf = join(dist, 'Kiran_Vadlapally_Resume.pdf');
+      if (!existsSync(pdf)) errors.push('PDF missing from dist');
       return errors;
     },
   },

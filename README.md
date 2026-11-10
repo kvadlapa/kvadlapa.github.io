@@ -113,7 +113,7 @@ Every test title starts with its acceptance-criterion number, for example `AC 3.
 
 These come from `docs/PLAN.md` section 6. Each one that touches content has a matching `// TODO(Kiran) Tn` comment in `src/`. Items marked **blocks launch** need an answer before the site is public.
 
-- [ ] **T1 Resume PDF and phone (blocks launch).** Remove the phone number from the PDF and check its metadata before adding it. No automated check covers the PDF.
+- [x] **T1 Resume PDF and phone (blocks launch).** Remove the phone number from the PDF and check its metadata before adding it. No automated check covers the PDF.
 - [ ] **T2 SoftwareIDM disclosure (blocks launch).** Check every U3 bullet against your employment agreement: the named systems, "Own the ServiceNow provider", "production-only bugs", "no dedicated QA", the infrastructure line, and the Claude Code and data-handling line.
 - [x] **T3 Accenture and Antra details.** "production insurance onboarding platform", "daily production reports", "enterprise clients".
 - [ ] **T4 Project content (blocks launch quality).** Repos have no descriptions or topics, so cards show name, language and last update. Add descriptions on GitHub or in `overrides`, and confirm the `featured` list and that coursework may be public.
