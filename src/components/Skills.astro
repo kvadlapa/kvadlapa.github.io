@@ -1,0 +1,35 @@
+---
+import { skills } from '../data/skills.ts';
+import PartGroup from './PartGroup.astro';
+import SectionLabel from './SectionLabel.astro';
+---
+
+<section id="skills" class="section" aria-labelledby="skills-title">
+  <div data-content>
+    <SectionLabel section="skills" index="05" rail="r" />
+    <h2 id="skills-title" class="section-title">Skills and tools</h2>
+    <div class="banks">
+      {skills.map((group) => <PartGroup group={group} />)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .banks {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-6) var(--s-5);
+  }
+
+  @media (min-width: 30rem) {
+    .banks {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .banks {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

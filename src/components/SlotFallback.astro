@@ -1,0 +1,233 @@
+---
+import { socketGeometry } from '../lib/socket-art.ts';
+import type { SlotName } from '../types.ts';
+
+interface Props {
+  slot: SlotName;
+}
+
+const { slot } = Astro.props;
+
+const LAND =
+  'M-120 900 0 780 0 760 100 660 240 660 300 600 340 600 400 540 440 540 530 450 540 450 580 410 650 340 730 260 750 260 840 170 860 170 900 130 940 130 950 120 1040 120 1110 120 1120 130 1160 130 1190 160 1220 160 1190 190 1190 210 1180 200 1070 200 1010 260 1010 270 950 330 940 330 890 380 890 400 830 460 830 470 780 520 780 540 760 560 760 630 750 640 750 740 770 720 780 720 810 690 810 660 890 580 940 580 920 600 920 650 910 660 910 700 980 630 1040 630 1090 680 1190 680 1280 770 1350 770 1430 850 1430 920 1590 1080 1650 1080 1650 1170 -120 1170Z';
+const CANAL = 'M650 340 660 350 660 390 690 420 690 430 700 440 720 440 760 480 760 490 780 510 790 510';
+
+const socket = slot === 'hero' ? socketGeometry() : undefined;
+
+const layer = (x: number, n: number) => Array.from({ length: n }, (_, i) => ({ x, y: 400 + (i - (n - 1) / 2) * 92 }));
+const [l1, l2, l3] = [layer(520, 4), layer(660, 6), layer(800, 4)];
+const nodes = [...l1, ...l2, ...l3];
+const edges = [
+  ...l1.flatMap((a) => l2.map((b) => `M${a.x} ${a.y}L${b.x} ${b.y}`)),
+  ...l2.flatMap((a) => l3.map((b) => `M${a.x} ${a.y}L${b.x} ${b.y}`)),
+].join('');
+const lit = new Set(['1,2', '2,2', '3,2', '4,2', '6,1']);
+const cells = Array.from({ length: 8 }, (_, r) =>
+  Array.from({ length: 4 }, (_, c) => ({ x: 110 + 66 * c, y: 190 + 54 * r, on: lit.has(`${r},${c}`) })),
+).flat();
+const slowNodes = [l1[0], l2[4], l3[1]];
+const fastNodes = [l1[2], l2[2], l3[2]];
+const polyline = (points: { x: number; y: number }[]) => points.map((p) => `${p.x},${p.y}`).join(' ');
+
+const dx = 74.5;
+const dy = 43;
+const a = 86;
+const cubes = [
+  [180, 520],
+  [370, 440],
+  [560, 520],
+  [750, 380],
+  [980, 500],
+].map(([cx, cy], index) => ({
+  stroke: index === 3 ? 'var(--b)' : 'var(--a)',
+  top: `${cx},${cy - a} ${cx + dx},${cy - a + dy} ${cx},${cy} ${cx - dx},${cy - a + dy}`,
+  left: `${cx - dx},${cy - a + dy} ${cx},${cy} ${cx},${cy + a} ${cx - dx},${cy + dy}`,
+  right: `${cx},${cy} ${cx + dx},${cy - a + dy} ${cx + dx},${cy + dy} ${cx},${cy + a}`,
+}));
+---
+
+{
+  slot === 'hero' && socket && (
+    <svg class="art socket-art" viewBox="1040 230 340 440" data-slot="hero" data-slot-state="fallback" aria-hidden="true">
+      <defs>
+        <radialGradient id="hero-glow" gradientUnits="userSpaceOnUse" cx="1210" cy="450" r="620">
+          <stop offset="0" stop-color="var(--a)" stop-opacity=".24" />
+          <stop offset=".55" stop-color="var(--a)" stop-opacity=".07" />
+          <stop offset="1" stop-color="var(--a)" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="hero-patina" gradientUnits="userSpaceOnUse" cx="1560" cy="60" r="360">
+          <stop offset="0" stop-color="var(--b)" stop-opacity=".16" />
+          <stop offset="1" stop-color="var(--b)" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="hero-bokeh">
+          <stop offset=".78" stop-color="var(--a)" stop-opacity=".22" />
+          <stop offset=".94" stop-color="var(--a)" stop-opacity=".12" />
+          <stop offset="1" stop-color="var(--a)" stop-opacity="0" />
+        </radialGradient>
+        <linearGradient id="hero-fade" gradientUnits="userSpaceOnUse" x1="620" x2="1000" y1="0" y2="0">
+          <stop offset="0" stop-color="#000" />
+          <stop offset="1" stop-color="#fff" />
+        </linearGradient>
+        <mask id="hero-mask" maskUnits="userSpaceOnUse" x="-400" y="-500" width="4000" height="1900">
+          <rect x="-400" y="-500" width="4000" height="1900" fill="url(#hero-fade)" />
+        </mask>
+      </defs>
+      <rect x="500" y="-300" width="1500" height="1500" fill="url(#hero-glow)" />
+      <rect x="1100" y="-400" width="1000" height="900" fill="url(#hero-patina)" />
+      <g mask="url(#hero-mask)" fill="none" stroke="var(--a)" stroke-width="5" stroke-linejoin="round">
+        <path d={socket.mid} opacity=".42" />
+        <path d={socket.front} opacity=".95" />
+      </g>
+      <g mask="url(#hero-mask)">
+        {
+          socket.vias.map(({ x, y }) => (
+            <>
+              <circle cx={x} cy={y} r="6" fill="var(--a)" opacity=".85" />
+              <circle cx={x} cy={y} r="2.5" fill="var(--bg)" />
+            </>
+          ))
+        }
+      </g>
+      <g fill="var(--a2)" opacity=".8">
+        {socket.pads.map(({ x, y, w, h }) => <rect x={x} y={y} width={w} height={h} rx="2" />)}
+      </g>
+      <g opacity=".7" fill="url(#hero-bokeh)">
+        <circle cx="1530" cy="760" r="96" />
+        <circle cx="1400" cy="830" r="58" />
+        <circle cx="1600" cy="600" r="44" />
+      </g>
+    </svg>
+  )
+}
+{
+  slot === 'keweenaw' && (
+    <svg class="art art-fill" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" data-slot="keweenaw" data-slot-state="fallback" aria-hidden="true">
+      <defs>
+        <pattern id="keweenaw-dots" width="40" height="40" patternUnits="userSpaceOnUse">
+          <circle cx="20" cy="20" r="1.4" fill="var(--art-line)" />
+        </pattern>
+        <pattern id="keweenaw-hatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width="12" height="12" fill="var(--art-land)" />
+          <path d="M0 0H12" stroke="var(--a)" stroke-opacity=".5" stroke-width="2" />
+        </pattern>
+      </defs>
+      <rect width="1600" height="900" fill="var(--bg)" />
+      <rect width="1600" height="900" fill="url(#keweenaw-dots)" />
+      <g fill="none" stroke-linejoin="bevel">
+        <path d={LAND} stroke="var(--b)" stroke-opacity=".2" stroke-width="184" />
+        <path d={LAND} stroke="var(--bg)" stroke-width="180" />
+        <path d={LAND} stroke="var(--b)" stroke-opacity=".3" stroke-width="124" />
+        <path d={LAND} stroke="var(--bg)" stroke-width="120" />
+        <path d={LAND} stroke="var(--b)" stroke-opacity=".45" stroke-width="64" />
+        <path d={LAND} stroke="var(--bg)" stroke-width="60" />
+      </g>
+      <path d={LAND} fill="url(#keweenaw-hatch)" stroke="var(--a)" stroke-width="4" stroke-linejoin="round" />
+      <path d={CANAL} fill="none" stroke="var(--bg)" stroke-width="12" stroke-linejoin="round" />
+      <circle cx="1110" cy="120" r="9" fill="var(--bg)" stroke="var(--a)" stroke-width="4" />
+      <circle cx="760" cy="320" r="9" fill="var(--bg)" stroke="var(--a)" stroke-width="4" />
+      <circle cx="690" cy="430" r="30" fill="none" stroke="var(--a2)" stroke-width="2" opacity=".5" />
+      <circle cx="690" cy="430" r="14" fill="var(--bg)" stroke="var(--a2)" stroke-width="6" />
+      <circle cx="690" cy="430" r="4" fill="var(--a2)" />
+    </svg>
+  )
+}
+{
+  slot === 'research-sql' && (
+    <svg class="art art-fill" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" data-slot="research-sql" data-slot-state="fallback" aria-hidden="true">
+      <defs>
+        <radialGradient id="research-sql-b" gradientUnits="userSpaceOnUse" cx="1000" cy="400" r="520">
+          <stop offset="0" stop-color="var(--b)" stop-opacity=".22" />
+          <stop offset="1" stop-color="var(--b)" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="research-sql-a" gradientUnits="userSpaceOnUse" cx="240" cy="400" r="420">
+          <stop offset="0" stop-color="var(--a)" stop-opacity=".16" />
+          <stop offset="1" stop-color="var(--a)" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+      <rect width="1200" height="800" fill="var(--bg)" />
+      <rect width="1200" height="800" fill="url(#research-sql-b)" />
+      <rect width="1200" height="800" fill="url(#research-sql-a)" />
+      {
+        cells.map(({ x, y, on }) => (
+          <>
+            <rect x={x} y={y} width="58" height="44" rx="4" fill="var(--bg)" stroke="var(--art-line)" stroke-width="1.5" />
+            <rect x={x} y={y} width="58" height="44" rx="4" fill="var(--a)" opacity={on ? 0.75 : 0.08} />
+          </>
+        ))
+      }
+      <path d={edges} fill="none" stroke="var(--art-line)" stroke-width="1.5" />
+      {nodes.map(({ x, y }) => <circle cx={x} cy={y} r="17" fill="var(--bg)" stroke="var(--art-line)" stroke-width="2.5" />)}
+      <polyline points={polyline([{ x: 374, y: 298 }, { x: 460, y: 298 }, ...slowNodes, { x: 1000, y: 400 }])} fill="none" stroke="var(--a)" stroke-width="3" stroke-dasharray="10 9" />
+      <polyline points={polyline([{ x: 374, y: 460 }, { x: 460, y: 460 }, ...fastNodes, { x: 1000, y: 400 }])} fill="none" stroke="var(--b)" stroke-width="6" stroke-linejoin="round" />
+      {slowNodes.map(({ x, y }) => <circle cx={x} cy={y} r="17" fill="var(--bg)" stroke="var(--a)" stroke-width="4" />)}
+      {
+        fastNodes.map(({ x, y }) => (
+          <>
+            <circle cx={x} cy={y} r="17" fill="var(--bg)" stroke="var(--b)" stroke-width="5" />
+            <circle cx={x} cy={y} r="6" fill="var(--b)" />
+          </>
+        ))
+      }
+      <rect x="1000" y="340" width="96" height="120" rx="8" fill="var(--bg)" stroke="var(--b)" stroke-width="5" />
+      <path d="M1020 372H1076M1020 400H1076M1020 428H1056" fill="none" stroke="var(--b)" stroke-width="6" />
+    </svg>
+  )
+}
+{
+  slot === 'research-cicd' && (
+    <svg class="art art-fill" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" data-slot="research-cicd" data-slot-state="fallback" aria-hidden="true">
+      <defs>
+        <radialGradient id="research-cicd-glow" gradientUnits="userSpaceOnUse" cx="750" cy="380" r="330">
+          <stop offset="0" stop-color="var(--a2)" stop-opacity=".42" />
+          <stop offset=".4" stop-color="var(--a)" stop-opacity=".12" />
+          <stop offset="1" stop-color="var(--b)" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+      <rect width="1200" height="800" fill="var(--bg)" />
+      <rect width="1200" height="800" fill="url(#research-cicd-glow)" />
+      <path d="M-10 660H1210M180 606V660M370 526V660M560 606V660M980 586V660" fill="none" stroke="var(--art-line)" stroke-width="4" />
+      <path d="M750 466V530M750 590V660" fill="none" stroke="var(--art-line)" stroke-width="4" />
+      {[180, 370, 560, 980].map((x) => <circle cx={x} cy="660" r="7" fill="var(--a)" />)}
+      <circle cx="750" cy="660" r="7" fill="var(--a2)" />
+      {
+        cubes.map((cube) => (
+          <g stroke={cube.stroke} stroke-width="3" stroke-linejoin="round">
+            <polygon points={cube.top} fill="var(--a)" fill-opacity=".2" />
+            <polygon points={cube.left} fill="var(--a)" fill-opacity=".08" />
+            <polygon points={cube.right} fill="var(--a)" fill-opacity=".13" />
+          </g>
+        ))
+      }
+      <path d="M750 300 738 338 762 362 742 398 768 430 750 466" fill="none" stroke="var(--a2)" stroke-width="5" stroke-linejoin="round" />
+      <path d="M762 362 792 352M742 398 712 408 700 396M768 430 796 442" fill="none" stroke="var(--a2)" stroke-width="3" stroke-linejoin="round" />
+      <g fill="none" stroke="var(--a2)" stroke-width="2.5">
+        <polygon points="818,296 836,284 842,306" />
+        <polygon points="664,300 676,286 688,304" />
+      </g>
+    </svg>
+  )
+}
+
+<style>
+  .art {
+    --a: var(--copper);
+    --a2: var(--copper-hover);
+    --b: var(--patina);
+  }
+
+  .art-fill {
+    width: 100%;
+    height: 100%;
+  }
+
+  .socket-art {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: -3;
+    width: 112%;
+    overflow: visible;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+</style>

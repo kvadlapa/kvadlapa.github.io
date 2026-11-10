@@ -1,0 +1,66 @@
+---
+import { profile } from '../data/profile.ts';
+import { hasResume, RESUME_FILE } from '../lib/resume.ts';
+
+const resume = hasResume();
+const arrow = 'M3 9 9 3M4 3h5v5';
+---
+
+<div class="cta-group">
+  {
+    resume ? (
+      <a class="btn btn-primary" href={`/${RESUME_FILE}`}>Resume</a>
+    ) : (
+      <a class="btn btn-primary" href={`mailto:${profile.email}?subject=Resume%20request`}>Request resume</a>
+    )
+  }
+  <a class="btn btn-secondary" href={profile.github} rel="noopener">
+    GitHub
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d={arrow}></path></svg>
+  </a>
+  <a class="btn btn-secondary" href={profile.linkedin} rel="noopener">
+    LinkedIn
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d={arrow}></path></svg>
+  </a>
+  <a class="btn btn-secondary" href={`mailto:${profile.email}`}>Email</a>
+</div>
+
+<style>
+  .cta-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-2);
+    margin-top: var(--s-6);
+  }
+
+  .cta-group .btn {
+    padding-inline: var(--s-2);
+  }
+
+  @media (min-width: 30rem) {
+    .cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-3);
+    }
+
+    .cta-group .btn {
+      padding-inline: var(--s-5);
+    }
+  }
+
+  @media (max-height: 30rem) and (orientation: landscape) {
+    .cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: var(--s-3);
+      gap: 0.5rem;
+    }
+
+    .cta-group .btn {
+      min-height: 2.75rem;
+      padding-inline: 0.875rem;
+      font-size: 0.9375rem;
+    }
+  }
+</style>

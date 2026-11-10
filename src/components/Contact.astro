@@ -1,0 +1,241 @@
+---
+import { profile } from '../data/profile.ts';
+import SectionLabel from './SectionLabel.astro';
+
+const rows = [
+  { key: 'email', label: profile.email, href: `mailto:${profile.email}` },
+  { key: 'linkedin', label: profile.linkedinHandle, href: profile.linkedin },
+  { key: 'github', label: profile.githubHandle, href: profile.github },
+];
+---
+
+<section id="contact" class="section" aria-labelledby="contact-title">
+  <div data-content>
+    <SectionLabel section="contact" index="06" />
+    <div class="panel" data-contact-panel>
+      <span class="connector" data-trace-anchor="end" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </span>
+      <div class="panel-grid">
+        <div>
+          <p class="silk panel-mark">J1 · REQUEST ACCESS</p>
+          <h2 id="contact-title">Request access</h2>
+          <p class="panel-line">{profile.contactLine}</p>
+          <div class="contact-status" data-contact-status data-status="granted">
+            <span class="status-string cs cs-pending" aria-hidden="true">○ LINK PENDING</span>
+            <span class="status-string cs cs-granted" data-status="granted"><span class="led" data-status="granted">●</span> ACCESS GRANTED</span>
+          </div>
+        </div>
+        <ul class="rows mono">
+          {
+            rows.map(({ key, label, href }) => (
+              <li>
+                <a href={href} rel={href.startsWith('http') ? 'noopener' : undefined}>
+                  <span class="row-key">{key}</span>
+                  <span class="row-value">{label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="panel-actions">
+        <a class="btn btn-primary" href={`mailto:${profile.email}?subject=Access%20request`}>Request access</a>
+        <div class="copy-slot" data-copy-slot data-email={profile.email}></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../scripts/copy-email.ts';
+</script>
+
+<style>
+  .panel {
+    position: relative;
+    max-width: 56rem;
+    margin: var(--s-7) auto 0;
+    padding: calc(var(--card-pad) * 1.5);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-3);
+    background: var(--surface);
+  }
+
+  .connector {
+    position: absolute;
+    top: -0.375rem;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 3rem;
+    height: 0.75rem;
+    margin-left: -1.5rem;
+    border: 1px solid var(--accent);
+    border-radius: var(--r-1);
+    background: var(--surface);
+  }
+
+  .connector span {
+    width: 0.25rem;
+    height: 0.25rem;
+    background: var(--accent);
+    transition: opacity var(--dur-2);
+  }
+
+  [data-contact-panel]:has([data-status='pending']) .connector span {
+    opacity: 0.25;
+  }
+
+  .panel-grid {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  .panel-mark {
+    color: var(--accent);
+    margin-bottom: var(--s-3);
+  }
+
+  .panel-line {
+    margin-top: var(--s-3);
+    max-width: 68ch;
+    color: var(--text);
+  }
+
+  .contact-status {
+    display: grid;
+    margin-top: var(--s-4);
+  }
+
+  .cs {
+    grid-area: 1 / 1;
+    transition: opacity var(--dur-2);
+  }
+
+  .cs-pending {
+    color: var(--muted);
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .led {
+    display: inline-block;
+  }
+
+  [data-status='pending'] .cs-pending {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  [data-status='pending'] .cs-granted {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  [data-contact-status][data-landed] .led {
+    animation: contact-pop var(--dur-2) var(--ease-out);
+  }
+
+  @keyframes contact-pop {
+    from {
+      transform: scale(0.6);
+    }
+  }
+
+  .rows li + li {
+    border-top: 1px solid var(--grid);
+  }
+
+  .rows a {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    min-height: 2.75rem;
+    transition: background-color var(--dur-1);
+  }
+
+  .rows a:active {
+    background: var(--surface-2);
+  }
+
+  .row-key {
+    flex: none;
+    min-width: 4.5rem;
+    color: var(--muted);
+  }
+
+  .row-value {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    color: var(--text);
+    transition: color var(--dur-1);
+  }
+
+  @media (hover: hover) {
+    .rows a:hover .row-value {
+      color: var(--accent);
+    }
+  }
+
+  .panel-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-top: var(--s-6);
+  }
+
+  .panel-actions .btn-primary {
+    flex: 1 1 100%;
+  }
+
+  .copy-slot {
+    display: none;
+    flex: 1 1 100%;
+    min-height: 3rem;
+  }
+
+  :global(html[data-js]) .copy-slot {
+    display: flex;
+  }
+
+  .copy-slot :global(.btn) {
+    width: 100%;
+  }
+
+  /* Print: the global print rule appends each link's URL; give it its own line so the value keeps
+     its width. The email row already shows the address. */
+  @media print {
+    .panel {
+      break-inside: avoid;
+    }
+
+    .rows a {
+      flex-wrap: wrap;
+      row-gap: 0;
+    }
+
+    .rows a::after {
+      flex-basis: 100%;
+    }
+
+    .rows a[href^='mailto']::after {
+      content: none;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .panel-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .panel-actions .btn-primary {
+      flex: 0 1 auto;
+    }
+
+    .copy-slot {
+      flex: 0 0 9.5rem;
+    }
+  }
+</style>

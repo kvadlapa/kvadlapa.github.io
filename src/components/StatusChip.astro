@@ -1,0 +1,61 @@
+---
+interface Props {
+  state: 'active' | 'in-progress';
+}
+
+const { state } = Astro.props;
+---
+
+{
+  state === 'active' ? (
+    <span class="status-string active" data-status="active" data-led>
+      ● ACTIVE
+    </span>
+  ) : (
+    <span class="status-string progress">● IN PROGRESS</span>
+  )
+}
+
+<style>
+  .active {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  /* The halo sits over the glyph. Only opacity animates, and it is the page's one infinite animation. */
+  .active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-top: -0.25rem;
+    border-radius: 50%;
+    background: var(--status);
+    transform: scale(2.2);
+    opacity: var(--led-static);
+    animation: led-pulse 2.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes led-pulse {
+    from,
+    to {
+      opacity: var(--led-low);
+    }
+    50% {
+      opacity: var(--led-high);
+    }
+  }
+
+  .progress {
+    display: inline-block;
+    padding: var(--s-1) var(--s-2);
+    border: 1px solid var(--accent);
+    border-radius: var(--r-1);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+</style>

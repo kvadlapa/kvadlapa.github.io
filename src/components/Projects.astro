@@ -1,0 +1,55 @@
+---
+import { placeholders } from '../data/projects.ts';
+import { profile } from '../data/profile.ts';
+import { loadProjects } from '../lib/github.ts';
+import ProjectCard from './ProjectCard.astro';
+import SectionLabel from './SectionLabel.astro';
+
+const projects = await loadProjects();
+---
+
+<section id="projects" class="section" aria-labelledby="projects-title">
+  <div data-content>
+    <SectionLabel section="projects" index="03" />
+    <h2 id="projects-title" class="section-title">Public repositories</h2>
+    <div class="project-grid">
+      {projects.map((project, index) => <ProjectCard project={project} designator={`Q${index + 1}`} />)}
+      {placeholders.map((placeholder) => <ProjectCard placeholder={placeholder} designator="DNP" />)}
+    </div>
+    <p class="more"><a class="btn btn-secondary" href={`${profile.github}?tab=repositories`} rel="noopener">All repositories on GitHub</a></p>
+  </div>
+</section>
+
+<script>
+  import '../scripts/pointer-glow.ts';
+</script>
+
+<style>
+  .project-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-5);
+    align-items: stretch;
+  }
+
+  .more {
+    margin-top: var(--s-6);
+  }
+
+  .more .btn {
+    white-space: normal;
+    text-align: center;
+  }
+
+  @media (min-width: 30rem) {
+    .project-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .project-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

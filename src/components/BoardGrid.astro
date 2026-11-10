@@ -1,0 +1,101 @@
+---
+import { Picture } from 'astro:assets';
+import { slotDef } from '../data/image-slots.ts';
+import { slotImage, slotWidths } from '../lib/images.ts';
+
+const def = slotDef('section-texture');
+const image = slotImage('section-texture');
+---
+
+<div class="board-layer" aria-hidden="true">
+  <div class="board-grid board-grid-pattern"></div>
+  {
+    image ? (
+      <div class="texture" data-slot="section-texture" data-slot-state="image">
+        <div class="texture-pin">
+          <Picture
+            src={image}
+            alt=""
+            formats={['avif', 'webp']}
+            fallbackFormat="webp"
+            widths={slotWidths(image)}
+            sizes={def.sizes}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+    ) : (
+      <div class="texture texture-tile" data-slot="section-texture" data-slot-state="fallback" />
+    )
+  }
+  <div class="margin-trace margin-trace-l"></div>
+  <div class="margin-trace margin-trace-r"></div>
+</div>
+
+<style>
+  /* Bottom of the board's stacking order; the hero layers sit between this and the trace (Hero.astro). */
+  .board-layer {
+    position: absolute;
+    inset: 0;
+    z-index: -10;
+    overflow: clip;
+  }
+
+  .board-grid {
+    position: absolute;
+    inset: 0;
+  }
+
+  .texture {
+    position: absolute;
+    inset: 0;
+    opacity: var(--texture-opacity);
+  }
+
+  .texture-tile {
+    background-image: var(--texture-tile);
+    background-size: 32rem 32rem;
+    background-repeat: repeat;
+  }
+
+  /* A page-tall stretch would blur the master, so the image holds one viewport. */
+  .texture-pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  .texture-pin :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .margin-trace {
+    display: none;
+  }
+
+  @media (min-width: 100rem) {
+    .margin-trace {
+      display: block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: calc(50% - 40rem - var(--gutter));
+      background-image: var(--margin-tile);
+      background-size: 30rem 60rem;
+      background-repeat: repeat-y;
+      mask-image: linear-gradient(90deg, #000 40%, transparent);
+    }
+
+    .margin-trace-l {
+      left: 0;
+    }
+
+    .margin-trace-r {
+      right: 0;
+      transform: scaleX(-1);
+    }
+  }
+</style>

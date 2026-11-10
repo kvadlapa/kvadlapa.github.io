@@ -1,0 +1,321 @@
+---
+import type { ProjectCardData, ResearchPlaceholder } from '../types.ts';
+import StatusChip from './StatusChip.astro';
+
+interface Props {
+  designator: string;
+  project?: ProjectCardData;
+  placeholder?: ResearchPlaceholder;
+}
+
+const { designator, project, placeholder } = Astro.props;
+
+const updated = project
+  ? new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(project.pushedAt))
+  : '';
+// The language leads the mono tags (repos have no topics yet), so it appears once on the card.
+const tags = project
+  ? [project.language, ...project.tags].filter((t, i, all): t is string => !!t && all.findIndex((u) => u?.toLowerCase() === t.toLowerCase()) === i)
+  : [];
+---
+
+{
+  project && (
+    <article class:list={['chip', { sparse: !project.description }]} data-project-card data-glow>
+      <svg class="bevel" viewBox="0 0 16 16" aria-hidden="true">
+        <path class="bevel-fill" d="M0 0H16L0 16Z" />
+        <path class="bevel-edge" d="M16 0 0 16" />
+      </svg>
+      <span class="pin-one" />
+      <div class="chip-body">
+        <div class="chip-top">
+          <span class="silk designator">{designator}</span>
+          <span class="silk updated">updated {updated}</span>
+        </div>
+        <h3 class="chip-title"><a href={project.url} rel="noopener">{project.name}</a></h3>
+        {project.description && <p class="description">{project.description}</p>}
+        <div class="chip-foot">
+          <div class="tags">
+            {tags.map((tag) => <span class="silk tag" data-tag>{tag}</span>)}
+          </div>
+        </div>
+      </div>
+      {!project.description && <span class="die" />}
+    </article>
+  )
+}
+{
+  placeholder && (
+    <article class="chip chip-dnp" data-placeholder>
+      <span class="pad pad-tl" /><span class="pad pad-tr" /><span class="pad pad-bl" /><span class="pad pad-br" />
+      <div class="chip-top">
+        <span class="silk designator">{designator}</span>
+      </div>
+      <h3 class="chip-title dnp-title">{placeholder.title}</h3>
+      <div class="chip-foot dnp-foot">
+        <StatusChip state="in-progress" />
+        <p class="dnp-line">{placeholder.line}</p>
+      </div>
+    </article>
+  )
+}
+
+<style>
+  .chip {
+    --glow-x: 50%;
+    --glow-y: 50%;
+    position: relative;
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 13rem;
+    padding: var(--card-pad);
+    border: 1px solid var(--grid);
+    border-radius: var(--r-2);
+    background: var(--surface);
+    transition: border-color var(--dur-2);
+  }
+
+  /* A container can't style itself, so the content wrapper carries the size-dependent height. */
+  .chip-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  /* Cards with no description are compact in the narrow layout... */
+  .sparse {
+    min-height: 9rem;
+  }
+
+  .bevel {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .bevel-fill {
+    fill: var(--bg);
+  }
+
+  .bevel-edge {
+    fill: none;
+    stroke: var(--grid);
+    stroke-width: 1;
+  }
+
+  .pin-one {
+    position: absolute;
+    top: 0.875rem;
+    left: 0.875rem;
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background: var(--line-strong);
+  }
+
+  .chip-top {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-3);
+  }
+
+  .designator {
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .updated {
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .chip-title {
+    font-family: var(--font-mono-stack);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+    color: var(--text);
+  }
+
+  .chip-title a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+  }
+
+  .chip-title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .description {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .chip-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-2);
+    margin-top: auto;
+    padding-top: var(--s-4);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-1);
+  }
+
+  .tag {
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--r-1);
+    background: var(--surface-2);
+    color: var(--accent);
+  }
+
+  .sparse .chip-foot {
+    padding-right: 3rem;
+  }
+
+  .die {
+    position: absolute;
+    right: var(--card-pad);
+    bottom: var(--card-pad);
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--grid);
+  }
+
+  .chip:has(a:focus-visible),
+  .chip[data-glow]:active {
+    border-color: var(--accent);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .chip[data-glow]::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        15rem circle at var(--glow-x) var(--glow-y),
+        color-mix(in srgb, var(--accent) var(--glow-strength), transparent),
+        transparent 70%
+      );
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--dur-2);
+    }
+
+    .chip[data-glow]:hover {
+      border-color: var(--accent);
+    }
+
+    .chip[data-glow]:hover::before {
+      opacity: 1;
+    }
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: reduce) {
+    .chip[data-glow]::before {
+      display: none;
+    }
+  }
+
+  /* Very narrow chips: the date drops under the designator instead of crowding it. */
+  @container (max-width: 11rem) {
+    .chip-top {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
+
+  /* Wide chips (2-up tablets, 1-up large phones): roomier title and a 4-line description. */
+  @container (min-width: 22rem) {
+    .chip-title {
+      font-size: 1.0625rem;
+    }
+
+    .description {
+      -webkit-line-clamp: 4;
+      line-clamp: 4;
+    }
+
+    .dnp-foot {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--s-3);
+    }
+
+    /* ...and keep the full 13rem footprint in the wide layout. */
+    .sparse .chip-body {
+      min-height: calc(13rem - 2 * var(--card-pad) - 2px);
+    }
+  }
+
+  .chip-dnp {
+    border: 1px dashed var(--line-strong);
+    background: var(--bg);
+  }
+
+  .dnp-title {
+    margin-top: var(--s-3);
+    font-family: var(--font-display-stack);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    overflow-wrap: normal;
+  }
+
+  .dnp-foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dnp-line {
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .pad {
+    position: absolute;
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--line-strong);
+  }
+
+  .pad-tl {
+    top: 0.375rem;
+    left: 0.375rem;
+  }
+
+  .pad-tr {
+    top: 0.375rem;
+    right: 0.375rem;
+  }
+
+  .pad-bl {
+    bottom: 0.375rem;
+    left: 0.375rem;
+  }
+
+  .pad-br {
+    bottom: 0.375rem;
+    right: 0.375rem;
+  }
+</style>

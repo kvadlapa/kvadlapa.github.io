@@ -1,0 +1,128 @@
+---
+import type { ResearchItem } from '../types.ts';
+import ImageSlot from './ImageSlot.astro';
+import StatusChip from './StatusChip.astro';
+
+interface Props {
+  item: ResearchItem;
+}
+
+const { item } = Astro.props;
+const links = [
+  { label: 'PAPER', url: item.paperUrl },
+  { label: 'REPO', url: item.repoUrl },
+];
+---
+
+<article class="research" data-research-card>
+  <div class="cover"><ImageSlot slot={item.slot} /></div>
+  <div class="research-body">
+    <div class="research-status"><StatusChip state="in-progress" /></div>
+    <h3>{item.title}</h3>
+    <p class="research-desc">{item.description}</p>
+    <div class="research-links">
+      {
+        links.map(({ label, url }) =>
+          url ? (
+            <a class="silk link-chip" href={url} rel="noopener">{label} →</a>
+          ) : (
+            <span class="silk dnp-chip" title="Not yet published">
+              {label} · DNP<span class="sr-only"> not yet published</span>
+            </span>
+          ),
+        )
+      }
+    </div>
+  </div>
+</article>
+
+<style>
+  .research {
+    container-type: inline-size;
+    overflow: hidden;
+    border: 1px solid var(--grid);
+    border-radius: var(--r-2);
+    background: var(--surface);
+  }
+
+  .cover {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-bottom: 1px solid var(--grid);
+  }
+
+  .research-body {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-3);
+    padding: var(--card-pad);
+  }
+
+  .research-desc {
+    color: var(--muted);
+  }
+
+  /* Wide cards: status chip and the paper/repo chips share the top row; title and text run full width. */
+  @container (min-width: 30rem) {
+    .research-body {
+      grid-template-columns: minmax(0, 1fr) auto;
+      column-gap: var(--s-4);
+      align-items: center;
+    }
+
+    .research-status {
+      grid-row: 1;
+      grid-column: 1;
+    }
+
+    .research-links {
+      grid-row: 1;
+      grid-column: 2;
+      justify-self: end;
+    }
+
+    .research-body h3,
+    .research-desc {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .research-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+
+  .dnp-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--s-1) var(--s-2);
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--r-1);
+    color: var(--muted);
+  }
+
+  .link-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: var(--s-3);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-1);
+    color: var(--text);
+    transition:
+      color var(--dur-1),
+      border-color var(--dur-1);
+  }
+
+  .link-chip:active {
+    background: var(--surface-2);
+  }
+
+  @media (hover: hover) {
+    .link-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+  }
+</style>

@@ -1,0 +1,254 @@
+---
+import type { Role } from '../types.ts';
+import StatusChip from './StatusChip.astro';
+
+interface Props {
+  role: Role;
+}
+
+const { role } = Astro.props;
+const titleId = `role-${role.designator.toLowerCase()}`;
+const isTestPoint = role.variant === 'test-point';
+---
+
+<article
+  class:list={['comp', { 'comp-tp': isTestPoint }]}
+  tabindex="0"
+  aria-labelledby={titleId}
+  data-component={role.designator}
+  data-variant={role.variant}
+>
+  {
+    isTestPoint ? (
+      <span class="test-pad" data-trace-anchor="pin" data-pin={role.designator} />
+    ) : (
+      <>
+        <svg class="notch" viewBox="0 0 32 12" aria-hidden="true">
+          <path d="M0 0a16 12 0 0 0 32 0" />
+        </svg>
+        <span class="pins pins-w" />
+        <span class="pins pins-e" />
+        <span class="pin-anchor" data-trace-anchor="pin" data-pin={role.designator} />
+      </>
+    )
+  }
+  <div class="comp-body">
+  <header class="comp-head">
+    <span class="silk designator">{role.designator}</span>
+    <div class="comp-title">
+      <h3 id={titleId}>{role.role}</h3>
+      <p class="company">{role.company}{role.location && `, ${role.location}`}</p>
+    </div>
+    <div class="comp-meta">
+      <span class="mono dates">{role.dateRange}</span>
+      {role.active && <StatusChip state="active" />}
+    </div>
+  </header>
+  <ul class="bullets">
+    {role.bullets.map((bullet) => <li>{bullet}</li>)}
+  </ul>
+  </div>
+</article>
+
+<style>
+  .comp {
+    position: relative;
+    container-type: inline-size;
+    padding: var(--card-pad);
+    border: 1px solid var(--grid);
+    border-radius: var(--r-2);
+    background: var(--surface);
+    transition:
+      border-color var(--dur-2) var(--ease-out),
+      box-shadow var(--dur-2) var(--ease-out);
+  }
+
+  .comp::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -1px;
+    width: 0.1875rem;
+    background: var(--accent);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 240ms var(--ease-out);
+  }
+
+  .comp[data-powered] {
+    border-color: var(--accent);
+    box-shadow: var(--power-shadow);
+  }
+
+  .comp[data-powered] .designator {
+    color: var(--accent-hover);
+  }
+
+  .comp[data-powered] .pins {
+    --pin: var(--accent);
+  }
+
+  .notch {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    width: 2rem;
+    height: 0.75rem;
+    margin-left: -1rem;
+    fill: var(--bg);
+    stroke: var(--grid);
+    stroke-width: 1;
+  }
+
+  .pins {
+    --pin: var(--line-strong);
+    display: none;
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 0.375rem;
+    background: repeating-linear-gradient(180deg, var(--pin) 0 0.5rem, transparent 0.5rem 1.25rem);
+  }
+
+  .pins-w {
+    left: -0.4375rem;
+  }
+
+  .pins-e {
+    right: -0.4375rem;
+  }
+
+  .pin-anchor {
+    position: absolute;
+    left: -0.4375rem;
+    top: 2.75rem;
+  }
+
+  @media (min-width: 30rem) {
+    .pins {
+      display: block;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .comp[data-powered]::before {
+      transform: scaleY(1);
+    }
+  }
+
+  .comp-head {
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .designator {
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .company {
+    margin-top: var(--s-1);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+  }
+
+  .comp-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-2) var(--s-4);
+  }
+
+  .dates {
+    color: var(--muted);
+  }
+
+  .comp-meta :global([data-status='active']) {
+    padding-left: 0.0625rem;
+  }
+
+  @container (min-width: 36rem) {
+    .comp-head {
+      grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+      align-items: start;
+      gap: var(--s-4);
+    }
+
+    .designator {
+      line-height: 1.9;
+    }
+
+    .comp-meta {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: var(--s-1);
+    }
+  }
+
+  /* Wide components: role, company, dates and status in a left column, bullets beside them. */
+  @container (min-width: 56rem) {
+    .comp-body {
+      display: grid;
+      grid-template-columns: minmax(14rem, 17rem) minmax(0, 1fr);
+      column-gap: var(--s-7);
+      align-items: start;
+    }
+
+    .comp-head {
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+      row-gap: var(--s-2);
+    }
+
+    .comp-meta {
+      grid-column: 2;
+      align-items: flex-start;
+    }
+
+    .comp-body .bullets {
+      margin-top: 0;
+    }
+  }
+
+  .bullets {
+    display: grid;
+    gap: var(--s-2);
+    max-width: 68ch;
+    margin-top: var(--s-4);
+  }
+
+  .bullets li {
+    position: relative;
+    padding-left: var(--s-4);
+  }
+
+  .bullets li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 0.25rem;
+    height: 0.25rem;
+    background: var(--accent);
+  }
+
+  .comp-tp {
+    margin-inline-start: clamp(0rem, 4vw, 3rem);
+    border-style: dashed;
+  }
+
+  .comp-tp .bullets {
+    font-size: var(--fs-small);
+  }
+
+  .test-pad {
+    position: absolute;
+    left: -0.5625rem;
+    top: 2.25rem;
+    width: 1rem;
+    height: 1rem;
+    border: 0.125rem solid var(--accent);
+    border-radius: 50%;
+    background: var(--bg);
+  }
+</style>

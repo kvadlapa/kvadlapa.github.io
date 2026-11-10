@@ -1,0 +1,68 @@
+---
+import type { SectionId } from '../types.ts';
+
+interface Props {
+  section: SectionId;
+  index: string;
+  rail?: 'l' | 'r';
+}
+
+const { section, index, rail = 'l' } = Astro.props;
+---
+
+<div class:list={['section-label', { 'section-label-contact': section === 'contact' }]}>
+  <span class="via" data-trace-anchor={rail === 'l' ? 'section' : undefined} data-section={section}></span>
+  <p class="silk label-text">/{section}</p>
+  <span class="hairline"></span>
+  <span class="silk label-index">{index}</span>
+  {rail === 'r' && <span class="rail-end" data-trace-anchor="section" data-section={section} />}
+</div>
+
+<style>
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    position: relative;
+  }
+
+  .via {
+    flex: none;
+    width: 0.625rem;
+    height: 0.625rem;
+    border: 0.125rem solid var(--accent);
+    border-radius: 50%;
+    background: var(--bg);
+  }
+
+  /* Silkscreen over copper: a trace running along the label (the /contact branch) passes under the text. */
+  .label-text {
+    position: relative;
+    color: var(--accent);
+    background: var(--bg);
+  }
+
+  .hairline {
+    flex: 1;
+    height: 1px;
+    background: var(--grid);
+  }
+
+  /* At 48rem and up the contact-label branch runs along this hairline; one line, not two. */
+  @media (min-width: 48rem) {
+    .section-label-contact .hairline {
+      background: transparent;
+    }
+  }
+
+  .label-index {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rail-end {
+    position: absolute;
+    right: -0.5rem;
+    top: 50%;
+  }
+</style>

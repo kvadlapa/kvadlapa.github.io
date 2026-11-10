@@ -1,0 +1,28 @@
+---
+import { byStartDesc, experience } from '../data/experience.ts';
+import BoardComponent from './BoardComponent.astro';
+import SectionLabel from './SectionLabel.astro';
+
+const roles = byStartDesc(experience);
+---
+
+<section id="experience" class="section" aria-labelledby="experience-title">
+  <div data-content>
+    <SectionLabel section="experience" index="02" />
+    <h2 id="experience-title" class="section-title">Where I've worked</h2>
+    <div class="components">
+      {roles.map((role) => <BoardComponent role={role} />)}
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../scripts/power.ts';
+</script>
+
+<style>
+  .components {
+    display: grid;
+    gap: var(--s-5);
+  }
+</style>

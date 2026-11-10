@@ -1,0 +1,33 @@
+---
+import bricolage from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-opsz-normal.woff2?url';
+import BoardGrid from '../components/BoardGrid.astro';
+import Footer from '../components/Footer.astro';
+import Nav from '../components/Nav.astro';
+import Seo from '../components/Seo.astro';
+import themeInit from '../scripts/theme-init.ts?raw';
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0B1218" />
+    <script is:inline set:html={themeInit} />
+    <link rel="preload" href={bricolage} as="font" type="font/woff2" crossorigin />
+    <slot name="head" />
+    <Seo />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="board">
+      <BoardGrid />
+      <Nav />
+      <main id="main" tabindex="-1">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>

@@ -1,0 +1,189 @@
+@property --oxidation {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+:root {
+  --texture-tile-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512'%3E%3Cfilter id='section-texture-p' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .03' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .373 0 0 0 0 .639 0 0 0 0 .604 1.8 1.2 0 0 -1.05'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23section-texture-p)'/%3E%3C/svg%3E");
+  --texture-tile-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512'%3E%3Cfilter id='section-texture-p' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .03' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .118 0 0 0 0 .4 0 0 0 0 .439 1.8 1.2 0 0 -1.05'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23section-texture-p)'/%3E%3C/svg%3E");
+  --margin-tile-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 960'%3E%3Cpath d='M40 0V100L80 140V380L40 420V960M120 0V170L160 210V450L120 490V960M200 0V240L240 280V520L200 560V960M280 0V310L320 350V590L280 630V960M360 0V380L400 420V660L360 700V960M440 0V450L480 490V730L440 770V960' fill='none' stroke='%231C2A35' stroke-width='1.5'/%3E%3Ccircle cx='80' cy='260' r='4' fill='%231C2A35'/%3E%3Ccircle cx='240' cy='400' r='4' fill='%231C2A35'/%3E%3Ccircle cx='400' cy='540' r='4' fill='%231C2A35'/%3E%3C/svg%3E");
+  --margin-tile-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 960'%3E%3Cpath d='M40 0V100L80 140V380L40 420V960M120 0V170L160 210V450L120 490V960M200 0V240L240 280V520L200 560V960M280 0V310L320 350V590L280 630V960M360 0V380L400 420V660L360 700V960M440 0V450L480 490V730L440 770V960' fill='none' stroke='%23CED3D4' stroke-width='1.5'/%3E%3Ccircle cx='80' cy='260' r='4' fill='%23CED3D4'/%3E%3Ccircle cx='240' cy='400' r='4' fill='%23CED3D4'/%3E%3Ccircle cx='400' cy='540' r='4' fill='%23CED3D4'/%3E%3C/svg%3E");
+
+  --fs-name: clamp(2.75rem, 8vw, 6.5rem);
+  --fs-h2: clamp(1.75rem, 1.4rem + 1.75vw, 2.75rem);
+  --fs-h3: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --fs-lead: clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
+  --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --fs-small: 0.875rem;
+  --fs-mono: 0.8125rem;
+  --fs-label: 0.75rem;
+
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4rem;
+  --s-9: 6rem;
+
+  --gutter: clamp(1rem, 0.4rem + 3vw, 4rem);
+  --gutter-l: max(var(--gutter), env(safe-area-inset-left));
+  --gutter-r: max(var(--gutter), env(safe-area-inset-right));
+  --section-y: clamp(4.5rem, 3rem + 7vw, 10rem);
+  --card-pad: clamp(1.25rem, 1rem + 1vw, 2rem);
+  --nav-h: 3.5rem;
+  --pitch: 1.5rem;
+  --badge-w: clamp(20rem, 30vw, 23.75rem);
+
+  --r-1: 0.125rem;
+  --r-2: 0.375rem;
+  --r-3: 0.75rem;
+
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --font-display-stack: 'Bricolage Grotesque', 'Bricolage Grotesque Fallback', system-ui, sans-serif;
+  --font-body-stack: 'Instrument Sans', 'Instrument Sans Fallback', system-ui, sans-serif;
+  --font-mono-stack: 'DM Mono', 'DM Mono Fallback', ui-monospace, monospace;
+}
+
+@media (max-height: 30rem) and (orientation: landscape) {
+  :root {
+    --fs-name: 2.75rem;
+    --nav-h: 3rem;
+  }
+}
+
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b1218;
+  --surface: #111c24;
+  --surface-2: #16242e;
+  --grid: #1c2a35;
+  --board-line: #1c2a35;
+  --board-line-minor: #141f28;
+  --line-strong: #647480;
+  --text: #e8ecef;
+  --silk: #c4cdd4;
+  --muted: #8c99a4;
+  --copper: #c47a4a;
+  --patina: #5fa39a;
+  --copper-hover: #e29a64;
+  --patina-hover: #8ccfc4;
+  --on-accent: #0b1218;
+  --status: #3ddc97;
+  --accent: color-mix(in oklch, var(--copper), var(--patina) calc(var(--oxidation) * 100%));
+  --accent-hover: color-mix(in oklch, var(--copper-hover), var(--patina-hover) calc(var(--oxidation) * 100%));
+  --art-line: #1c2a35;
+  --art-land: #111c24;
+  --trace-0: #c47a4a;
+  --trace-1: #ac8b40;
+  --trace-2: #8c9a57;
+  --trace-3: #6da27a;
+  --trace-4: #5fa39a;
+  --texture-opacity: 0.06;
+  --texture-tile: var(--texture-tile-dark);
+  --margin-tile: var(--margin-tile-dark);
+  --glow-strength: 24%;
+  /* LED halo. Peaks keep the ● glyph's worst pixel at >=4.5:1 (AC 1.11). */
+  --led-low: 0.1;
+  --led-high: 0.3;
+  --led-static: 0.2;
+  --grid-strength: 0.4;
+  --power-shadow: 0 0 0 1px var(--accent), 0 0 2rem -0.5rem color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f4f1ea;
+  --surface: #ffffff;
+  --surface-2: #eae5d9;
+  --grid: #dcd6c8;
+  --board-line: #ced3d4;
+  --board-line-minor: #dfe0de;
+  --line-strong: #76818b;
+  --text: #13202a;
+  --silk: #1f4a6e;
+  --muted: #5a6670;
+  --copper: #8e4e26;
+  --patina: #1e6670;
+  --copper-hover: #74401d;
+  --patina-hover: #154c54;
+  --on-accent: #ffffff;
+  --status: #087443;
+  --accent: color-mix(in oklab, var(--copper), var(--patina) calc(var(--oxidation) * 100%));
+  --accent-hover: color-mix(in oklab, var(--copper-hover), var(--patina-hover) calc(var(--oxidation) * 100%));
+  --art-line: #ced3d4;
+  --art-land: #ffffff;
+  --trace-0: #8e4e26;
+  --trace-1: #7a573e;
+  --trace-2: #645e50;
+  --trace-3: #496261;
+  --trace-4: #1e6670;
+  --texture-opacity: 0.06;
+  --texture-tile: var(--texture-tile-light);
+  --margin-tile: var(--margin-tile-light);
+  --glow-strength: 12%;
+  --led-low: 0.04;
+  --led-high: 0.12;
+  --led-static: 0.08;
+  /* 0.4 left light --muted at 4.48:1 where a grid line crosses a texture streak. */
+  --grid-strength: 0.3;
+  --power-shadow: 0 0 0 1px var(--accent), 0 0.5rem 1.5rem -0.75rem color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+/* Without JS, data-theme is never set, so the OS decides (AC 6.10). */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+    --bg: #f4f1ea;
+    --surface: #ffffff;
+    --surface-2: #eae5d9;
+    --grid: #dcd6c8;
+    --board-line: #ced3d4;
+    --board-line-minor: #dfe0de;
+    --line-strong: #76818b;
+    --text: #13202a;
+    --silk: #1f4a6e;
+    --muted: #5a6670;
+    --copper: #8e4e26;
+    --patina: #1e6670;
+    --copper-hover: #74401d;
+    --patina-hover: #154c54;
+    --on-accent: #ffffff;
+    --status: #087443;
+    --accent: color-mix(in oklab, var(--copper), var(--patina) calc(var(--oxidation) * 100%));
+    --accent-hover: color-mix(in oklab, var(--copper-hover), var(--patina-hover) calc(var(--oxidation) * 100%));
+    --art-line: #ced3d4;
+    --art-land: #ffffff;
+    --trace-0: #8e4e26;
+    --trace-1: #7a573e;
+    --trace-2: #645e50;
+    --trace-3: #496261;
+    --trace-4: #1e6670;
+    --texture-opacity: 0.06;
+    --texture-tile: var(--texture-tile-light);
+    --margin-tile: var(--margin-tile-light);
+    --glow-strength: 12%;
+  --led-low: 0.04;
+  --led-high: 0.12;
+  --led-static: 0.08;
+  /* 0.4 left light --muted at 4.48:1 where a grid line crosses a texture streak. */
+  --grid-strength: 0.3;
+    --power-shadow: 0 0 0 1px var(--accent), 0 0.5rem 1.5rem -0.75rem color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+}
+
+@supports not (color: color-mix(in oklch, red, blue)) {
+  :root {
+    --accent: var(--copper);
+    --accent-hover: var(--copper-hover);
+  }
+}

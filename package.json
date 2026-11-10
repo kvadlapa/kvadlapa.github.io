@@ -1,0 +1,43 @@
+{
+  "name": "kvadlapa-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Copper Circuit: Kiran Vadlapally's software engineer portfolio",
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1",
+    "build": "astro build",
+    "check": "astro check",
+    "test": "playwright test --project=main; main=$?; npm run test:independent; independent=$?; [ $main -eq 0 ] && [ $independent -eq 0 ]",
+    "test:main": "playwright test --project=main",
+    "test:independent": "playwright test -c tests/independent/playwright.config.ts",
+    "test:fixtures": "node scripts/run-fixtures.ts",
+    "lighthouse": "node scripts/lighthouse.ts",
+    "snapshot": "node scripts/refresh-github-snapshot.ts",
+    "images": "node scripts/generate-images.ts",
+    "favicons": "node scripts/generate-favicons.ts"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource/bricolage-grotesque": "^5.3.0",
+    "@fontsource/dm-mono": "^5.3.0",
+    "@fontsource/instrument-sans": "^5.3.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@tailwindcss/vite": "^4.3.4",
+    "astro": "^7.4.5",
+    "satori": "^0.63.2",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.3.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6",
+    "lighthouse": "^13.6.0",
+    "serve": "^14.2.6",
+    "typescript": "^6.0.3",
+    "yaml": "^2.9.1"
+  }
+}

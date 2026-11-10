@@ -1,0 +1,175 @@
+---
+import { profile } from '../data/profile.ts';
+import { slotImage } from '../lib/images.ts';
+import CredentialCard from './CredentialCard.astro';
+import CtaGroup from './CtaGroup.astro';
+import HeroImage from './HeroImage.astro';
+
+const hasImage = Boolean(slotImage('hero'));
+---
+
+<section id="hero" class="hero" aria-labelledby="hero-name">
+  {hasImage && <HeroImage />}
+  <div class="hero-board board-grid-pattern" aria-hidden="true"></div>
+  <div data-content class="hero-grid">
+    <div class="hero-copy" data-overlay>
+      <p class="silk eyebrow">/whoami</p>
+      <h1 id="hero-name">{profile.firstName} <br class="name-break" />{profile.lastName}</h1>
+      <p class="tagline">{profile.tagline}</p>
+      <p class="headline">{profile.headline}</p>
+      <p class="mono location">{profile.location} · {profile.relocation}</p>
+      <CtaGroup />
+    </div>
+    <CredentialCard art={!hasImage} />
+  </div>
+</section>
+
+<style>
+  /*
+   * The hero makes no stacking context of its own, so its layers interleave with the page trace
+   * in the board's context: photo -4, socket art -3, scrim -2, grid -1, trace 0, copy and badge 1+.
+   * That keeps the grid continuous over the scrim and the trace visible over hero.png.
+   */
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    min-height: calc(100svh - var(--nav-h));
+    padding-block: var(--s-5) var(--s-7);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-7);
+  }
+
+  /* Starts at the page top (clipped by the hero) so its grid phase matches BoardGrid's. */
+  .hero-board {
+    position: absolute;
+    top: calc(-1 * (var(--nav-h) + env(safe-area-inset-top) + 1px));
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .hero-copy {
+    position: relative;
+    min-width: 0;
+  }
+
+  .hero-copy > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-copy::before {
+    content: '';
+    position: absolute;
+    z-index: -2;
+    inset: -100vh -100vw -3rem;
+    background: linear-gradient(180deg, var(--bg) calc(100% - 4rem), transparent 100%);
+    pointer-events: none;
+  }
+
+  .eyebrow {
+    color: var(--accent);
+    margin-bottom: var(--s-3);
+  }
+
+  h1 {
+    font-size: var(--fs-name);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+
+  .tagline {
+    margin-top: var(--s-5);
+    font-size: var(--fs-lead);
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  .headline {
+    margin-top: var(--s-3);
+    max-width: 34rem;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--silk);
+  }
+
+  .location {
+    margin-top: var(--s-2);
+    color: var(--silk);
+  }
+
+  @media (min-width: 56rem) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr) var(--badge-w);
+      align-items: center;
+    }
+
+    .hero-copy::before {
+      inset: -100vh -3rem -100vh -100vw;
+      background: linear-gradient(
+        90deg,
+        var(--bg) calc(100% - 29rem),
+        color-mix(in srgb, var(--bg) 90%, transparent) calc(100% - 19rem),
+        color-mix(in srgb, var(--bg) 80%, transparent) calc(100% - 11rem),
+        transparent 100%
+      );
+    }
+
+    .headline {
+      max-width: min(34rem, 100% - 8rem);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .hero {
+      min-height: clamp(36rem, calc(100dvh - var(--nav-h)), 67.5rem);
+    }
+  }
+
+  @media (max-height: 30rem) and (orientation: landscape) {
+    .hero {
+      min-height: auto;
+      padding-block: var(--s-5);
+    }
+
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr) 18.75rem;
+      gap: var(--s-5);
+      align-items: start;
+    }
+
+    .name-break {
+      display: none;
+    }
+
+    .eyebrow {
+      margin-bottom: var(--s-1);
+    }
+
+    h1 {
+      white-space: nowrap;
+    }
+
+    .tagline,
+    .headline {
+      font-size: var(--fs-small);
+      line-height: 1.4;
+      margin-top: var(--s-2);
+    }
+
+    .location {
+      margin-top: var(--s-1);
+    }
+  }
+</style>

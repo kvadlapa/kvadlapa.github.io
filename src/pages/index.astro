@@ -1,0 +1,38 @@
+---
+import About from '../components/About.astro';
+import Contact from '../components/Contact.astro';
+import Experience from '../components/Experience.astro';
+import Hero from '../components/Hero.astro';
+import Projects from '../components/Projects.astro';
+import Research from '../components/Research.astro';
+import Skills from '../components/Skills.astro';
+import Trace from '../components/Trace.astro';
+import Base from '../layouts/Base.astro';
+import { getHeroSources } from '../lib/hero-sources.ts';
+import { reportSlots } from '../lib/images.ts';
+
+reportSlots();
+const hero = await getHeroSources();
+---
+
+<Base>
+  {
+    hero && (
+      <Fragment slot="head">
+        <link rel="preload" as="image" type="image/avif" media={hero.portraitMedia} imagesrcset={hero.portrait.avif} imagesizes={hero.portrait.sizes} fetchpriority="high" />
+        <link rel="preload" as="image" type="image/avif" media={hero.landscapeMedia} imagesrcset={hero.landscape.avif} imagesizes={hero.landscape.sizes} fetchpriority="high" />
+      </Fragment>
+    )
+  }
+  <Trace />
+  <Hero />
+  <span data-trace-anchor="gap" data-gap="hero"></span>
+  <About />
+  <Experience />
+  <Projects />
+  <span data-trace-anchor="gap" data-gap="projects"></span>
+  <Research />
+  <Skills />
+  <span data-trace-anchor="gap" data-gap="skills"></span>
+  <Contact />
+</Base>

@@ -1,0 +1,29 @@
+---
+import { research } from '../data/research.ts';
+import ResearchCard from './ResearchCard.astro';
+import SectionLabel from './SectionLabel.astro';
+---
+
+<section id="research" class="section" aria-labelledby="research-title">
+  <div data-content>
+    <SectionLabel section="research" index="04" rail="r" />
+    <h2 id="research-title" class="section-title">Current research</h2>
+    <div class="research-grid">
+      {research.map((item) => <ResearchCard item={item} />)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .research-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-5);
+  }
+
+  @media (min-width: 48rem) {
+    .research-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

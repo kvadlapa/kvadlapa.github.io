@@ -1,0 +1,69 @@
+/* Latin subsets only, woff2 only. Written by hand so no .woff or extra subset is emitted. */
+/* Bricolage is the variable opsz+wght file: one request covers 600 and 700, and large sizes get the display cut. */
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600 700;
+  src: url('@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-opsz-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('@fontsource/instrument-sans/files/instrument-sans-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url('@fontsource/instrument-sans/files/instrument-sans-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'DM Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('@fontsource/dm-mono/files/dm-mono-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'DM Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url('@fontsource/dm-mono/files/dm-mono-latin-500-normal.woff2') format('woff2');
+}
+
+/* Metric-matched fallbacks, computed from the font files with capsize, so the swap cannot move layout. */
+@font-face {
+  font-family: 'Bricolage Grotesque Fallback';
+  font-display: swap;
+  font-weight: 600 700;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 100.18%;
+  ascent-override: 92.83%;
+  descent-override: 26.95%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Instrument Sans Fallback';
+  font-display: swap;
+  font-weight: 400 500;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 103.76%;
+  ascent-override: 93.49%;
+  descent-override: 24.09%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'DM Mono Fallback';
+  font-display: swap;
+  font-weight: 400 500;
+  src: local('Courier New'), local('CourierNewPSMT');
+  size-adjust: 99.98%;
+  ascent-override: 99.22%;
+  descent-override: 31.01%;
+  line-gap-override: 0%;
+}

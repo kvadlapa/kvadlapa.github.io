@@ -1,0 +1,51 @@
+<button class="icon-btn theme-toggle" type="button" aria-label="Light mode" title="Light mode (blueprint paper)" aria-pressed="false" data-theme-toggle>
+  <span class="flip" aria-hidden="true">
+    <svg class="face front" viewBox="0 0 24 16">
+      <rect x="0.5" y="0.5" width="23" height="15" rx="1.5" fill="var(--surface)" stroke="var(--line-strong)"></rect>
+      <path d="M3 11H9L12 5H21" fill="none" stroke="var(--accent)" stroke-width="1.5"></path>
+    </svg>
+    <svg class="face back" viewBox="0 0 24 16">
+      <rect x="0.5" y="0.5" width="23" height="15" rx="1.5" fill="#F4F1EA" stroke="#76818B"></rect>
+      <path d="M3 5H21M3 8H21M3 11H21" fill="none" stroke="#1F4A6E"></path>
+    </svg>
+  </span>
+</button>
+
+<script>
+  import '../scripts/theme-toggle.ts';
+</script>
+
+<style>
+  .theme-toggle {
+    perspective: 10rem;
+  }
+
+  :global(html:not([data-js])) .theme-toggle {
+    display: none;
+  }
+
+  .flip {
+    position: relative;
+    display: block;
+    width: 1.5rem;
+    height: 1rem;
+    transform-style: preserve-3d;
+    transition: transform 560ms var(--ease-in-out);
+  }
+
+  [aria-pressed='true'] .flip {
+    transform: rotateY(180deg);
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+  }
+
+  .back {
+    transform: rotateY(180deg);
+  }
+</style>
